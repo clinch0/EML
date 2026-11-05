@@ -103,6 +103,7 @@ class RunResult:
     seconds: float
     max_error: float = math.inf
     tree: Node | None = field(default=None, repr=False)
+    logits: list[torch.Tensor] | None = field(default=None, repr=False)
 
     def as_dict(self) -> dict[str, object]:
         """Return the fields as a JSON-friendly dict (tree as a string)."""
@@ -162,6 +163,7 @@ def train_once(
     depth: int,
     seed: int,
     config: TrainConfig | None = None,
+    initial_logits: list[torch.Tensor] | None = None,
 ) -> RunResult:
     """Train one master tree from the seed ``seed`` and snap it.
 
@@ -171,6 +173,7 @@ def train_once(
         depth: Master-tree depth.
         seed: Seed for the logit initialisation.
         config: Hyper-parameters (defaults to :class:`TrainConfig`).
+        initial_logits: Optional warm start, copied without modifying the input.
 
     Returns:
         The :class:`RunResult`.
@@ -181,6 +184,14 @@ def train_once(
     if xt.shape != yt.shape:
         raise ValueError("x and y must have the same number of samples")
     model = MasterTree(depth, sigma=cfg.sigma, seed=seed, tau=cfg.tau0)
+    if initial_logits is not None:
+        if len(initial_logits) != depth:
+            raise ValueError("initial_logits must have one tensor per level")
+        with torch.no_grad():
+            for param, initial in zip(model.parameters(), initial_logits, strict=True):
+                if param.shape != initial.shape or not torch.isfinite(initial).all():
+                    raise ValueError("initial_logits must have valid shapes and finite values")
+                param.copy_(initial)
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr)
     ema = [p.detach().clone() for p in model.parameters()] if cfg.ema_beta else None
     loss_value = math.inf
@@ -222,6 +233,7 @@ def train_once(
         seconds=time.perf_counter() - start,
         max_error=max_err,
         tree=tree,
+        logits=[p.detach().clone() for p in model.parameters()],
     )
 
 
