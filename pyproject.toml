@@ -46,3 +46,4 @@ convention = "google"
 "scripts/**" = ["D100"]
 "benchmarks/**" = ["D100"]
 "examples/**" = ["D100"]
+"coursework/**" = ["D", "ANN", "E501"]

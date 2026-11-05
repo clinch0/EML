@@ -17,7 +17,7 @@ def test_embedding_and_corruption():
             p.copy_(value)
     assert model.to_discrete() == tree
     x = torch.linspace(0.5, 2, 20)
-    np.testing.assert_allclose(model.forward_discrete(x).detach(), np.log(x), atol=1e-6)
+    np.testing.assert_allclose(model.forward_discrete(x).detach(), np.log(x.numpy()), atol=1e-6)
     for k in range(7):
         corrupt = embed_tree(tree, 4, mistakes=k, seed=17)
         assert (

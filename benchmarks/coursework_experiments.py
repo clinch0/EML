@@ -1,5 +1,5 @@
 """Run preregistered coursework experiments with resumable per-task CSV files."""
-# ruff: noqa: ANN
+# ruff: noqa: ANN001, ANN201
 
 import argparse
 import csv
@@ -46,19 +46,21 @@ def task(args):
     x = np.linspace(0.5, 2, 40)
     inside = np.linspace(0.503, 1.997, 301)
     outside = np.linspace(2.01, 2.5, 301)
-    cfg = TrainConfig(epochs=epochs, ema_beta=beta)
+    cfg = TrainConfig(epochs=epochs * (3 if method == "LONG" else 1), ema_beta=beta)
     initial = None
-    rounds = 3 if method in ("IR", "RF") else 1
+    rounds = 3 if method in ("IR", "RF", "RF0") else 1
     if method.startswith("k"):
         initial = embed_tree(reference, depth, mistakes=int(method[1:]), seed=seed)
     rows = []
     previous_logits = None
     for r in range(rounds):
-        if method == "RF" and r:
+        if method in ("RF", "RF0") and r:
             assert previous_logits is not None
             gen = torch.Generator().manual_seed(seed + 300000 + r)
             initial = [
-                p + torch.randn(p.shape, generator=gen, dtype=p.dtype) * (0.5 / r)
+                p
+                + torch.randn(p.shape, generator=gen, dtype=p.dtype)
+                * (0.5 / r if method == "RF" else 0.0)
                 for p in previous_logits
             ]
         result = train_once(x, fn(x), depth, seed + 100000 * r, cfg, initial)
@@ -92,6 +94,7 @@ def main():
     parser.add_argument("--runs", type=int, default=30)
     parser.add_argument("--epochs", type=int, default=1000)
     parser.add_argument("--jobs", type=int, default=4)
+    parser.add_argument("--ablation", action="store_true")
     parser.add_argument("--out", default="benchmarks/results/full")
     args = parser.parse_args()
     out = Path(args.out)
@@ -124,6 +127,12 @@ def main():
         ]
         for seed in range(20000, 20000 + args.runs)
     ]
+    if args.ablation:
+        jobs = [
+            ("log", method, 0.0, seed, args.epochs, str(out))
+            for method in ("IR", "RF", "RF0", "LONG")
+            for seed in range(30000, 30000 + args.runs)
+        ]
     with ProcessPoolExecutor(max_workers=args.jobs) as pool:
         for i, _ in enumerate(pool.map(task, jobs)):
             if (i + 1) % 30 == 0:
