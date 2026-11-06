@@ -2,6 +2,16 @@
 
 Symbolic regression on EML trees. / Символьная регрессия на EML-деревьях.
 
+Самый короткий запуск:
+
+```powershell
+python -m pip install -e ".[dev]"
+python examples/minimal.py
+```
+
+Скрипт создаёт точки функции `exp(x)`, обучает маленькое EML-дерево и печатает
+найденную формулу. Более длинные примеры и эксперименты оставлены ниже.
+
 `eml(x, y) = exp(x) - ln(y)`, grammar `S -> 1 | eml(S, S)` (plus the variable `x` as a leaf).
 From the constant `1` and the operator `eml` elementary functions can be expressed
 (Odrzywolek, arXiv:2603.21852, 2026), e.g. `e = eml(1, 1)`, `exp(x) = eml(x, 1)`,
