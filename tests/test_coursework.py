@@ -35,3 +35,11 @@ def test_intervals_and_pairing():
     assert 0.11 < hi < 0.12
     assert paired([0, 1], [0, 1])["low"] is None
     assert paired([1] * 30, [0] * 30)["delta"] == 1
+
+
+def test_ablation_budget(tmp_path):
+    for method in ("RF0", "LONG"):
+        path = task(("log", method, 0.0, 19, 2, str(tmp_path)))
+        with open(path, encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        assert sum(int(r["epochs"]) for r in rows) == 6

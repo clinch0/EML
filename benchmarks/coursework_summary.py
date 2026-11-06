@@ -169,8 +169,15 @@ def main():
         )
         ax.set_xticks(range(4), ["IR", "IR+EMA", "RF", "RF+EMA"])
         ax.set_ylim(0, 1.08)
-        ax.set_title(name)
-        ax.set_ylabel("Success fraction")
+        ax.set_title(
+            {
+                "exp_minus_one": "exp(x)−1",
+                "log": "ln(x)",
+                "exp_e_minus_x": "exp(e−x)",
+                "e_minus_exp": "e−exp(x)",
+            }[name]
+        )
+        ax.set_ylabel("Доля успеха")
     fig.tight_layout()
     fig.savefig(out / "methods.png", dpi=200)
     plt.close(fig)
@@ -193,12 +200,19 @@ def main():
             capsize=4,
         )
         cold = next(r for r in summary if r["target"] == name and r["method"] == "cold")
-        ax.axhline(cold["rate"], color="gray", linestyle="--", label="Cold start")
+        ax.axhline(cold["rate"], color="gray", linestyle="--", label="Холодный старт")
         ax.set_ylim(-0.03, 1.08)
         ax.set_xticks([0, 1, 3])
-        ax.set_title(name)
-        ax.set_xlabel("Corrupted active inputs k")
-        ax.set_ylabel("Success fraction")
+        ax.set_title(
+            {
+                "exp_minus_one": "exp(x)−1",
+                "log": "ln(x)",
+                "exp_e_minus_x": "exp(e−x)",
+                "e_minus_exp": "e−exp(x)",
+            }[name]
+        )
+        ax.set_xlabel("Число повреждённых входов k")
+        ax.set_ylabel("Доля успеха")
         ax.legend()
     fig.tight_layout()
     fig.savefig(out / "basin.png", dpi=200)

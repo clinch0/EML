@@ -112,6 +112,12 @@ def main():
         config=asdict(TrainConfig(epochs=args.epochs)),
         started=time.time(),
     )
+    if (out / "meta.json").exists():
+        previous = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+        if previous["args"] != meta["args"]:
+            raise ValueError("Existing output has different arguments; use a fresh directory")
+        previous.setdefault("resumed", []).append(time.time())
+        meta = previous
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     jobs = [
         (name, method, beta, seed, args.epochs, str(out))
