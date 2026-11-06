@@ -8,3 +8,6 @@ dist/
 .ruff_cache/
 result/
 examples/output/
+benchmarks/results/full/*_200??.csv
+benchmarks/results/ablation/*_300??.csv
+coursework/output/

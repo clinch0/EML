@@ -1,0 +1,26 @@
+{
+  "args": {
+    "runs": 30,
+    "epochs": 1000,
+    "jobs": 4,
+    "out": "benchmarks/results/full"
+  },
+  "python": "3.12.10",
+  "torch": "2.14.0+cpu",
+  "numpy": "2.5.3",
+  "platform": "Windows-11-10.0.28000-SP0",
+  "commit": "2f97a4caeb9bf1b7485852fa97cef6ff111f2c86",
+  "config": {
+    "epochs": 1000,
+    "lr": 0.05,
+    "tau0": 1.0,
+    "tau_min": 0.01,
+    "soft_fraction": 0.5,
+    "entropy_weight": 0.0,
+    "sigma": 1.0,
+    "tol": 1e-08,
+    "ema_beta": 0.0
+  },
+  "started": 1793893976.063994,
+  "finished": 1793895302.9114528
+}

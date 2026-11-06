@@ -2,6 +2,16 @@
 
 Symbolic regression on EML trees. / Символьная регрессия на EML-деревьях.
 
+Самый короткий запуск:
+
+```powershell
+python -m pip install -e ".[dev]"
+python examples/minimal.py
+```
+
+Скрипт создаёт точки функции `exp(x)`, обучает маленькое EML-дерево и печатает
+найденную формулу. Более длинные примеры и эксперименты оставлены ниже.
+
 `eml(x, y) = exp(x) - ln(y)`, grammar `S -> 1 | eml(S, S)` (plus the variable `x` as a leaf).
 From the constant `1` and the operator `eml` elementary functions can be expressed
 (Odrzywolek, arXiv:2603.21852, 2026), e.g. `e = eml(1, 1)`, `exp(x) = eml(x, 1)`,
@@ -157,3 +167,11 @@ python scripts/completion.py                      # процент выполн�
 
 Подробности: `docs/ARCHITECTURE.md`, `docs/DECISIONS.md`, `docs/REQUIREMENTS.md`,
 `docs/SOFTWARE_INFO.md`.
+
+## Полное исследование для курсовой
+
+Основная серия: 840 эпизодов, 1800 проходов; дополнительный контроль: 120 эпизодов, 300 проходов. Исходные данные находятся в `benchmarks/results/full` и `benchmarks/results/ablation`. Текст и сборщик документа — в `coursework/`.
+
+Главный результат: последовательное уточнение улучшило восстановление на трёх из четырёх целей при равном бюджете. Для ln(x) основная серия дала 20/30 против 3/30 у независимых стартов; новый набор seed дал 10/30 против 3/30. Отдельная польза шума не установлена. EMA с beta=0.99 не изменило исходы независимых стартов. Это перенос отдельных идей TRM, а не воспроизведение её архитектуры.
+
+Команды полного воспроизведения приведены в `coursework/README.md`; гипотезы и ограничения — в `docs/PROTOCOL_FULL.md` и `docs/PROTOCOL_ABLATION.md`.
