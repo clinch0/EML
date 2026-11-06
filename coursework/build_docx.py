@@ -183,6 +183,9 @@ def table(caption, headers, rows, widths=None):
         for c, txt in zip(t.add_row().cells, row, strict=False):
             c.text = str(txt)
     for i, row in enumerate(t.rows):
+        if widths:
+            for cell, width in zip(row.cells, widths, strict=True):
+                cell.width = Cm(width)
         pr = row._tr.get_or_add_trPr()
         pr.append(OxmlElement("w:cantSplit"))
         for c in row.cells:

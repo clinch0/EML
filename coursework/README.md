@@ -33,3 +33,10 @@ python benchmarks/ablation_summary.py
 ```
 
 `ablation_summary.py` читает фиксированный каталог `benchmarks/results/ablation`. Чтобы полностью повторить серию, используйте чистую копию репозитория без сохранённых поэпизодных файлов или новый каталог с последующей настройкой пути сводки. Объединённые `runs.csv` содержат все исходные наблюдения; отдельные файлы эпизодов исключены из Git как дубликаты.
+Итоговый документ: [Курсовая в Word](Курсовая_Белов_EML_TRM.docx), 35 страниц. После изменения текста на Windows с установленным Microsoft Word можно обновить оглавление и экспортировать PDF для проверки:
+
+```powershell
+./coursework/finalize_word.ps1 -InputDoc (Resolve-Path coursework/output/Курсовая_Белов_EML_TRM.docx).Path -OutputPdf "$PWD/coursework/output/review.pdf"
+```
+
+PDF и изображения страниц используются для проверки оформления; итоговый файл для редактирования — DOCX.
